@@ -1,4 +1,3 @@
-import os
 import re
 import logging
 from contextlib import asynccontextmanager
@@ -7,13 +6,10 @@ import time
 
 from fastapi import FastAPI, Header, HTTPException, status, Depends
 from pydantic import BaseModel, Field, field_validator
+from pydantic_settings import BaseSettings
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import hashlib
 import hmac
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -46,8 +42,8 @@ except ImportError:
 # ======================================
 # Configuration
 # ======================================
-class Settings(BaseModel):
-    api_key: str = Field("01977@Rashed_Embeddings", env="API_KEY", description="API Key for authentication")
+class Settings(BaseSettings):
+    api_key: str = Field("abc123", env="API_KEY", description="API Key for authentication")
     dense_model_name: str = Field("BAAI/bge-small-en", env="DENSE_MODEL_NAME", description="Name of the dense embedding model")
     sparse_model_name: str = Field("Qdrant/bm25", env="SPARSE_MODEL_NAME", description="Name of the sparse embedding model (FastEmbed only)")
     sparse_model_name_2: str = Field("rank_bm25", env="SPARSE_MODEL_NAME_2", description="Name of the sparse embedding model (Rank_BM25)" )
@@ -57,12 +53,10 @@ class Settings(BaseModel):
     
     class Config:
         env_file = ".env"
+        env_file_encoding = "utf-8"
 
 settings = Settings()
 
-# Log the generated API key if it's auto-generated (for development)
-if not os.getenv("API_KEY"):
-    logger.warning(f"Using auto-generated API key: {settings.api_key}")
 
 # ======================================
 # FastAPI App Lifecycle Management

@@ -4,3 +4,4 @@ pydantic
 python-dotenv
 fastembed
 rank_bm25
+pydantic-settings
